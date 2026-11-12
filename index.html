@@ -170,7 +170,9 @@
   .fg-hist { font-size: 19px; color: #c0d0c0; margin-top: 6px; }
 
 
-  .ticker { margin-top: 8px; margin-bottom: 2px; flex-shrink: 0; display: flex; align-items: center; gap: 16px; background: rgba(10, 16, 12, .78); border: 2px solid rgba(217, 179, 106, .55); border-radius: 12px; padding: 18px 20px 18px 12px; overflow: hidden; }
+  .ticker { margin-top: 8px; margin-bottom: 2px; flex-shrink: 0; display: flex; flex-direction: column; align-items: stretch; gap: 6px; background: rgba(10, 16, 12, .78); border: 2px solid rgba(217, 179, 106, .55); border-radius: 12px; padding: 10px 20px 18px 12px; overflow: hidden; }
+  .ticker-head { display: flex; justify-content: flex-start; }
+  .ticker-bar { display: flex; align-items: center; gap: 16px; }
   .ticker-label { flex-shrink: 0; font-size: 22px; font-weight: 800; letter-spacing: 2px; color: #0e1713; background: #d9b36a; border-radius: 7px; padding: 8px 14px; }
   .news-countdown { flex-shrink: 0; display: inline-flex; align-items: center; gap: 8px;
     font-size: 17px; font-weight: 700; letter-spacing: 1px; color: #f2e3b6; white-space: nowrap;
@@ -253,7 +255,7 @@
     <span class="tagline">Stay here to relax — and see the news update as it happens.</span>
     <span class="stay-right">
       <span class="live-status"><span id="status" class="ok">● LIVE FEED</span> &nbsp;·&nbsp; updated <span id="updated">—</span></span>
-      <span class="fed-pill">🏦 FED DECISION IN <b id="fedCountdown">—</b></span>
+      <span class="fed-pill">📊 PPI REPORT IN <b id="ppiCountdown">—</b></span>
     </span>
   </div>
 
@@ -301,12 +303,17 @@
   </div>
 
   <div class="ticker">
+    <div class="ticker-head">
+      <span class="news-countdown" id="newsCountdown"><svg width="26" height="26" viewBox="0 0 26 26"><circle class="cd-ring-bg" cx="13" cy="13" r="10" fill="none" stroke-width="2.5"/><circle class="cd-ring-fg" id="cdRing" cx="13" cy="13" r="10" fill="none" stroke-width="2.5" stroke-dasharray="62.83" stroke-dashoffset="0" transform="rotate(-90 13 13)"/></svg><span id="cdText">next update in 30:00</span><span class="upd" id="updNews"></span></span>
+    </div>
+    <div class="ticker-bar">
     <span class="ticker-label">CRYPTO NEWS</span>
-    <span class="news-countdown" id="newsCountdown"><svg width="26" height="26" viewBox="0 0 26 26"><circle class="cd-ring-bg" cx="13" cy="13" r="10" fill="none" stroke-width="2.5"/><circle class="cd-ring-fg" id="cdRing" cx="13" cy="13" r="10" fill="none" stroke-width="2.5" stroke-dasharray="62.83" stroke-dashoffset="0" transform="rotate(-90 13 13)"/></svg><span id="cdText">next update in 30:00</span><span class="upd" id="updNews"></span></span>
+    
     <div class="ticker-viewport">
       <div class="ticker-track" id="tickerTrack">Bitcoin hit $73,477 overnight — lowest since Aug 21 &nbsp;•&nbsp; US spot Bitcoin ETFs saw ~$1.28B outflows over the week &nbsp;•&nbsp; Fear &amp; Greed still 29 (Fear); Democrats took both chambers in the midterms &nbsp;•&nbsp; Bitcoin hit $73,477 overnight — lowest since Aug 21 &nbsp;•&nbsp; US spot Bitcoin ETFs saw ~$1.28B outflows over the week &nbsp;•&nbsp; Fear &amp; Greed still 29 (Fear); Democrats took both chambers in the midterms &nbsp;•&nbsp;</div>
     </div>
   </div>
+    </div>
 
   <footer>
     <div>Educational content only — not financial advice. youtube.com/@northledgercanada</div>
@@ -347,7 +354,7 @@ function removeNetlifyBadge() {
 removeNetlifyBadge();
 setInterval(removeNetlifyBadge, 2000);
 // Auto-update: check version.json every 5 min; reload when a new deploy lands so OBS never needs a manual refresh.
-const BUILD_VERSION = "2026-11-12T01:05:00Z";
+const BUILD_VERSION = "2026-11-12T01:18:00Z";
 async function checkForUpdate() {
   try {
     const r = await fetch("version.json?_=" + Date.now(), { cache: "no-store", headers: { "Cache-Control": "no-cache, no-store, must-revalidate", "Pragma": "no-cache" } });
@@ -400,12 +407,12 @@ fetchContent();
 setInterval(fetchContent, 300000); // re-read the Gist every 5 min
 updateCpi();
 setInterval(updateCpi, 1000);
-// Fed decision countdown — FOMC Dec 8–9, 2026; decision announced Dec 9, 2:00 PM ET.
-const FED_TARGET = new Date(2026, 11, 9, 14, 0, 0);
-function updateFed() {
-  const el = document.getElementById("fedCountdown");
+// PPI countdown — October PPI, Fri Nov 13, 2026, 8:30 AM ET.
+const PPI_TARGET = new Date(2026, 10, 13, 8, 30, 0);
+function updatePpi() {
+  const el = document.getElementById("ppiCountdown");
   if (!el) return;
-  const ms = FED_TARGET - new Date();
+  const ms = PPI_TARGET - new Date();
   if (ms <= 0) { el.textContent = "TODAY"; return; }
   const d = Math.floor(ms / 86400000);
   const h = Math.floor((ms % 86400000) / 3600000);
@@ -413,8 +420,8 @@ function updateFed() {
   const s = Math.floor((ms % 60000) / 1000);
   el.textContent = d + "d " + String(h).padStart(2, "0") + ":" + String(m).padStart(2, "0") + ":" + String(s).padStart(2, "0");
 }
-updateFed();
-setInterval(updateFed, 1000);
+updatePpi();
+setInterval(updatePpi, 1000);
 // Price-distance + today's-range strip (under the chart).
 function updateLevels2() {
   const el = document.getElementById("levels2");
