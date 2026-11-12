@@ -19,7 +19,7 @@
   .price-mock .cad { font-size: 20px; color: #b9c4b4; }
   .price-mock .down { font-size: 19px; color: #e26d5a; }
   /* ---- the calm card, copied from the live dashboard ---- */
-  .calm-cta { margin-left: auto; align-self: flex-end; padding-bottom: 10px; max-width: 700px; text-align: right; }
+  .calm-cta { position: relative; margin-left: auto; align-self: flex-end; padding-bottom: 10px; max-width: 700px; text-align: right; }
   .calm-cta-inner { animation: calm-breathe 6s ease-in-out infinite; }
   @keyframes calm-breathe { 0%,100% { opacity: .82; transform: scale(1); } 50% { opacity: 1; transform: scale(1.015); } }
   .calm-cta.animating .calm-cta-inner { animation: none; opacity: 1; }
@@ -64,6 +64,10 @@
     transition: opacity .3s ease, transform .35s cubic-bezier(.34,1.56,.64,1);
   }
   .calm-cta.step-bell .all-tag { opacity: 1; transform: scale(1); }
+  /* ---- mouse cursor that clicks the buttons, like your subscribe video ---- */
+  .cursor { position: absolute; left: 0; top: 0; width: 30px; height: 30px; opacity: 0; pointer-events: none; z-index: 5; transition: transform .7s cubic-bezier(.45,0,.2,1), opacity .35s ease; will-change: transform; }
+  .cursor svg { width: 30px; height: 30px; display: block; filter: drop-shadow(0 1px 2px rgba(0,0,0,.55)); transition: transform .13s ease; }
+  .cursor.pressing svg { transform: scale(.8); }
   /* ---- caption + controls ---- */
   .status { margin-top: 26px; font-size: 15px; color: #9fb3a4; min-height: 22px; }
   .status b { color: #e8efe9; }
@@ -73,6 +77,19 @@
     color: #d9b36a; font-size: 15px; font-weight: 700; border-radius: 999px; padding: 8px 18px; cursor: pointer;
   }
   .note { font-size: 13px; color: #7d9384; line-height: 1.5; }
+  .preview-only { margin-top: 18px; padding-top: 12px; border-top: 1px solid rgba(255,255,255,.12); font-size: 13px; color: #7d9384; line-height: 1.5; }
+  /* ---- phone: stack the price above the card so nothing is cut off ---- */
+  @media (max-width: 640px) {
+    .stage { padding: 20px 16px 16px; }
+    .price-row { flex-wrap: wrap; }
+    .price-mock { font-size: 22px; white-space: normal; padding-bottom: 0; }
+    .price-mock .cad { font-size: 16px; }
+    .price-mock .down { font-size: 15px; }
+    .calm-cta { margin-left: 0; max-width: 100%; padding-bottom: 0; text-align: left; }
+    .calm-line { font-size: 18px; white-space: normal; }
+    .calm-actions { justify-content: flex-start; }
+    .calm-like, .calm-sub { font-size: 16px; }
+  }
 </style>
 </head>
 <body>
@@ -88,8 +105,10 @@
           <span class="calm-sub"><svg viewBox="0 0 24 24" fill="none" stroke="#d9b36a" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M6 8a6 6 0 0 1 12 0c0 7 3 9 3 9H3s3-2 3-9"/><path d="M10.3 21a1.94 1.94 0 0 0 3.4 0"/></svg> <span class="sub-label">Subscribe</span><span class="all-tag">ALL</span></span>
         </div>
       </div>
+      <div class="cursor" id="animCursor"><svg viewBox="0 0 24 24"><path d="M6 3 L19 12.5 L13.8 13.6 L16.8 20.8 L14.2 21.9 L11.2 14.7 L6.5 18.5 Z" fill="#ffffff" stroke="#111111" stroke-width="1.4" stroke-linejoin="round"/></svg></div>
     </div>
   </div>
+  <div class="preview-only">Everything below this line is preview notes for you only &mdash; the status text, the replay button, and this note. None of it goes on the live dashboard. The dashboard gets only the animated card above.</div>
   <div class="status" id="status">Resting &mdash; the calm card, as it is on the stream now.</div>
   <div class="controls">
     <button class="replay" id="replayBtn">Replay the animation</button>
@@ -102,38 +121,82 @@
   var cta = document.getElementById('calmCta');
   var statusEl = document.getElementById('status');
   var subLabel = document.querySelector('.sub-label');
+  var cursor = document.getElementById('animCursor');
+  var likeChip = document.querySelector('.calm-like');
+  var subPill = document.querySelector('.calm-sub');
+  var bellIcon = document.querySelector('.calm-sub svg');
   var timers = [];
   function later(ms, fn) { timers.push(setTimeout(fn, ms)); }
   function setStatus(html) { statusEl.innerHTML = html; }
+  function centerOf(el) {
+    var r = el.getBoundingClientRect();
+    var c = cta.getBoundingClientRect();
+    return { x: r.left - c.left + r.width / 2, y: r.top - c.top + r.height / 2 };
+  }
+  // Place the arrow so its tip lands on (x, y).
+  function moveCursor(x, y) {
+    cursor.style.transform = 'translate(' + (x - 6) + 'px,' + (y - 4) + 'px)';
+  }
+  function pressCursor() {
+    cursor.classList.add('pressing');
+    later(170, function() { cursor.classList.remove('pressing'); });
+  }
   function runCycle() {
     timers.forEach(clearTimeout); timers = [];
     cta.classList.remove('animating','step-like','step-sub-red','step-subbed','step-bell');
     subLabel.textContent = 'Subscribe';
+    cursor.classList.remove('pressing');
+    var like = centerOf(likeChip), sub = centerOf(subPill), bell = centerOf(bellIcon);
+    // Park the cursor out of sight, down-left of Like, with no transition.
+    cursor.style.transition = 'none';
+    cursor.style.opacity = '0';
+    moveCursor(like.x - 60, like.y + 52);
+    void cursor.offsetWidth;
+    cursor.style.transition = '';
     setStatus('Resting &mdash; the calm card, as it is on the stream now.');
-    later(600, function() {
+    later(400, function() {
+      cursor.style.opacity = '1';
+      moveCursor(like.x, like.y);
+      setStatus('<b>1 &middot; Like</b> &mdash; the cursor slides over to Like&hellip;');
+    });
+    later(1200, function() {
+      pressCursor();
       cta.classList.add('animating','step-like');
-      setStatus('<b>1 &middot; Like</b> &mdash; the thumb fills blue and pops, like your subscribe video.');
+      setStatus('<b>1 &middot; Like</b> &mdash; &hellip;and clicks it. The thumb fills blue.');
     });
-    later(2200, function() {
+    later(1900, function() {
+      moveCursor(sub.x, sub.y);
+      setStatus('<b>2 &middot; Subscribe</b> &mdash; the cursor slides over to Subscribe&hellip;');
+    });
+    later(2700, function() {
       cta.classList.add('step-sub-red');
-      setStatus('<b>2 &middot; Subscribe</b> &mdash; the pill turns red, the way YouTube&rsquo;s button does.');
+      setStatus('<b>2 &middot; Subscribe</b> &mdash; hovering turns the pill red, the way YouTube&rsquo;s button looks.');
     });
-    later(3800, function() {
+    later(3400, function() {
+      pressCursor();
       cta.classList.remove('step-sub-red');
       cta.classList.add('step-subbed');
       subLabel.textContent = '\u2713 Subscribed';
-      setStatus('<b>3 &middot; Subscribed</b> &mdash; the pill turns grey, &ldquo;Subscribed&rdquo; with a check.');
+      setStatus('<b>3 &middot; Subscribed</b> &mdash; one click, and the pill turns grey, &ldquo;Subscribed&rdquo;.');
     });
-    later(5200, function() {
+    later(4300, function() {
+      moveCursor(bell.x, bell.y);
+      setStatus('<b>4 &middot; Bell</b> &mdash; the cursor moves to the bell&hellip;');
+    });
+    later(5100, function() {
+      pressCursor();
       cta.classList.add('step-bell');
-      setStatus('<b>4 &middot; Bell</b> &mdash; the bell rings, turns gold, and the ALL tag pops in.');
+      setStatus('<b>4 &middot; Bell</b> &mdash; &hellip;clicks it. The bell rings gold and the ALL tag pops in.');
     });
-    later(7800, function() {
+    later(6800, function() {
+      cursor.style.opacity = '0';
+    });
+    later(7600, function() {
       cta.classList.remove('animating','step-like','step-subbed','step-bell');
       subLabel.textContent = 'Subscribe';
       setStatus('Settling back to the calm card&hellip;');
     });
-    later(9000, function() {
+    later(8600, function() {
       setStatus('Resting &mdash; the calm card, as it is on the stream now.');
     });
   }
