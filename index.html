@@ -2,6 +2,9 @@
 <html lang="en">
 <head>
 <meta charset="UTF-8">
+  <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
+  <meta http-equiv="Pragma" content="no-cache">
+  <meta http-equiv="Expires" content="0">
 <meta name="viewport" content="width=1920, initial-scale=1">
 <title>North Ledger — Bitcoin Live</title>
 <!--
@@ -147,7 +150,7 @@
   .upd { font-size: 15px; font-weight: 400; color: rgba(245,241,232,.55); letter-spacing: 0; margin-left: 10px; white-space: nowrap; }
 .box-title { font-size: 20px; font-weight: 700; letter-spacing: 3px; color: #c0d0c0; margin-bottom: 8px; }
   .box-title b { color: #d9b36a; }
-  #chart { width: 100%; height: 150px; display: block; opacity: 0; transition: opacity 1s ease; }
+  #chart { width: 100%; height: 120px; display: block; opacity: 0; transition: opacity 1s ease; }
   .levels { margin-top: 8px; font-size: 21px; color: #d5e0d5; }
   .levels b { font-weight: 700; }
 
@@ -187,7 +190,7 @@
   .ticker-track { display: inline-block; white-space: nowrap; font-size: 31px; line-height: 1.35; font-weight: 600; color: #f5f1e8; animation: ticker-scroll 120s linear infinite; }
   @keyframes ticker-scroll { from { transform: translateX(0); } to { transform: translateX(-50%); } }
 
-  footer { margin-top: auto; display: flex; justify-content: space-between; align-items: center; font-size: 19px; color: #a8b8a8; padding-top: 10px; }
+  footer { position: absolute; left: 64px; right: 64px; bottom: 24px; display: flex; justify-content: space-between; align-items: center; font-size: 19px; color: #a8b8a8; padding-top: 10px; }
   #updated { color: #d5e0d5; font-weight: 600; }
   #status { font-weight: 700; }
   #status.ok { color: #8fb996; } #status.bad { color: #d08a76; }
@@ -351,7 +354,7 @@ function removeNetlifyBadge() {
 removeNetlifyBadge();
 setInterval(removeNetlifyBadge, 2000);
 // Auto-update: check version.json every 5 min; reload when a new deploy lands so OBS never needs a manual refresh.
-const BUILD_VERSION = "2026-11-12T01:30:00Z";
+const BUILD_VERSION = "2026-11-12T01:32:00Z";
 async function checkForUpdate() {
   try {
     const r = await fetch("version.json?_=" + Date.now(), { cache: "no-store", headers: { "Cache-Control": "no-cache, no-store, must-revalidate", "Pragma": "no-cache" } });
