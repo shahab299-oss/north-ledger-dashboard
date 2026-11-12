@@ -137,8 +137,8 @@
 
   .chart-row { margin-top: 4px; display: flex; gap: 28px; align-items: stretch; }
   .chart-box { flex: 1.9; }
-  .market { flex: 1; background: rgba(245,241,232,.08); border: 1px solid rgba(245,241,232,.13); border-radius: 16px; padding: 12px 20px; display: flex; flex-direction: column; }
-  .mrow { display: flex; align-items: baseline; justify-content: space-between; padding: 4px 0; border-bottom: 1px solid rgba(245,241,232,.07); font-size: 20px; }
+  .market { flex: 1; background: rgba(245,241,232,.08); border: 1px solid rgba(245,241,232,.13); border-radius: 16px; padding: 8px 20px; display: flex; flex-direction: column; }
+  .mrow { display: flex; align-items: baseline; justify-content: space-between; padding: 2px 0; border-bottom: 1px solid rgba(245,241,232,.07); font-size: 20px; }
   .mrow:last-of-type { border-bottom: none; }
   .mrow .coin { font-weight: 700; color: #f5f1e8; }
   .mrow .coin small { color: #c0d0c0; font-weight: 600; margin-left: 6px; }
@@ -150,12 +150,12 @@
   .upd { font-size: 15px; font-weight: 400; color: rgba(245,241,232,.55); letter-spacing: 0; margin-left: 10px; white-space: nowrap; }
 .box-title { font-size: 20px; font-weight: 700; letter-spacing: 3px; color: #c0d0c0; margin-bottom: 8px; }
   .box-title b { color: #d9b36a; }
-  #chart { width: 100%; height: 120px; display: block; opacity: 0; transition: opacity 1s ease; }
+  #chart { width: 100%; height: 90px; display: block; opacity: 0; transition: opacity 1s ease; }
   .levels { margin-top: 8px; font-size: 21px; color: #d5e0d5; }
   .levels b { font-weight: 700; }
 
   .analysis { margin-top: 6px; display: flex; gap: 28px; }
-  .panel { background: rgba(245,241,232,.08); border: 1px solid rgba(245,241,232,.13); border-radius: 16px; padding: 12px 20px; }
+  .panel { background: rgba(245,241,232,.08); border: 1px solid rgba(245,241,232,.13); border-radius: 16px; padding: 8px 20px; }
   .panel.ta { flex: 1.35; }
   .panel.fg { flex: 1; }
   .verdict { font-size: 25px; font-weight: 800; line-height: 1.3; }
@@ -173,8 +173,8 @@
   .fg-hist { font-size: 19px; color: #c0d0c0; margin-top: 6px; }
 
 
-  .ticker { margin-top: 0; margin-bottom: 2px; flex-shrink: 0; display: flex; align-items: center; gap: 16px; background: rgba(10, 16, 12, .78); border: 2px solid rgba(217, 179, 106, .55); border-radius: 12px; padding: 14px 20px 14px 12px; overflow: hidden; }
-  .news-countdown-outer { align-self: flex-start; margin-top: 8px; margin-bottom: 4px; }
+  .ticker { margin-top: 0; margin-bottom: 2px; flex-shrink: 0; display: flex; align-items: center; gap: 16px; background: rgba(10, 16, 12, .78); border: 2px solid rgba(217, 179, 106, .55); border-radius: 12px; padding: 10px 20px 10px 12px; overflow: hidden; }
+  .news-countdown-outer { align-self: flex-start; margin-top: 4px; margin-bottom: 2px; }
   .ticker-label { flex-shrink: 0; font-size: 22px; font-weight: 800; letter-spacing: 2px; color: #0e1713; background: #d9b36a; border-radius: 7px; padding: 8px 14px; }
   .news-countdown { flex-shrink: 0; display: inline-flex; align-items: center; gap: 8px;
     font-size: 17px; font-weight: 700; letter-spacing: 1px; color: #f2e3b6; white-space: nowrap;
@@ -190,7 +190,7 @@
   .ticker-track { display: inline-block; white-space: nowrap; font-size: 31px; line-height: 1.35; font-weight: 600; color: #f5f1e8; animation: ticker-scroll 120s linear infinite; }
   @keyframes ticker-scroll { from { transform: translateX(0); } to { transform: translateX(-50%); } }
 
-  footer { position: absolute; left: 64px; right: 64px; bottom: 24px; display: flex; justify-content: space-between; align-items: center; font-size: 19px; color: #a8b8a8; padding-top: 10px; }
+  footer { position: absolute; left: 64px; right: 64px; bottom: 16px; display: flex; justify-content: space-between; align-items: center; font-size: 19px; color: #a8b8a8; padding-top: 10px; }
   #updated { color: #d5e0d5; font-weight: 600; }
   #status { font-weight: 700; }
   #status.ok { color: #8fb996; } #status.bad { color: #d08a76; }
@@ -354,7 +354,7 @@ function removeNetlifyBadge() {
 removeNetlifyBadge();
 setInterval(removeNetlifyBadge, 2000);
 // Auto-update: check version.json every 5 min; reload when a new deploy lands so OBS never needs a manual refresh.
-const BUILD_VERSION = "2026-11-12T01:34:00Z";
+const BUILD_VERSION = "2026-11-12T01:36:00Z";
 async function checkForUpdate() {
   try {
     const r = await fetch("version.json?_=" + Date.now(), { cache: "no-store", headers: { "Cache-Control": "no-cache, no-store, must-revalidate", "Pragma": "no-cache" } });
