@@ -83,7 +83,7 @@
   body[data-theme="night"] .flow .f1 { background: radial-gradient(closest-side, rgba(120,160,200,.12), rgba(120,160,200,0)); }
   body[data-theme="night"] .flow .f2 { background: radial-gradient(closest-side, rgba(120,160,180,.11), rgba(120,160,180,0)); }
   body[data-theme="night"] .flow .f3 { background: radial-gradient(closest-side, rgba(140,120,180,.11), rgba(140,120,180,0)); }
-  .wrap { position: absolute; left: 0; top: 0; z-index: 1; width: 1920px; height: 1080px; padding: 26px 64px 36px; display: flex; flex-direction: column; transform-origin: top left; }
+  .wrap { position: absolute; left: 0; top: 0; z-index: 1; width: 1920px; height: 1080px; padding: 26px 64px 24px; display: flex; flex-direction: column; transform-origin: top left; }
   header { display: flex; align-items: center; justify-content: space-between; }
   .brand { display: flex; align-items: center; gap: 18px; }
   .logo-lockup { height: 54px; width: auto; }
@@ -98,7 +98,7 @@
   .dot { width: 14px; height: 14px; border-radius: 50%; background: #d9b36a; animation: pulse 2.4s ease-in-out infinite; }
   @keyframes pulse { 0%,100% { opacity: 1; } 50% { opacity: .35; } }
 
-  .price-row { margin-top: 12px; display: flex; align-items: flex-end; gap: 34px; }
+  .price-row { margin-top: 8px; display: flex; align-items: flex-end; gap: 34px; }
   .price-block { display: flex; flex-direction: column; }
   .price-label { font-size: 19px; font-weight: 700; letter-spacing: 3px; color: #c0d0c0; margin-bottom: 2px; }
   .price-usd { font-size: 88px; font-weight: 800; line-height: .95; letter-spacing: -2px; }
@@ -132,7 +132,7 @@
   .up { color: #8fb996; } .down { color: #d08a76; } .amber { color: #d9b36a; }
   /* No per-second price flash - relaxing stream: price stays calm cream, only the 24h change keeps its green/red. */
 
-  .chart-row { margin-top: 6px; display: flex; gap: 28px; align-items: stretch; }
+  .chart-row { margin-top: 4px; display: flex; gap: 28px; align-items: stretch; }
   .chart-box { flex: 1.9; }
   .market { flex: 1; background: rgba(245,241,232,.08); border: 1px solid rgba(245,241,232,.13); border-radius: 16px; padding: 12px 20px; display: flex; flex-direction: column; }
   .mrow { display: flex; align-items: baseline; justify-content: space-between; padding: 4px 0; border-bottom: 1px solid rgba(245,241,232,.07); font-size: 20px; }
@@ -147,11 +147,11 @@
   .upd { font-size: 15px; font-weight: 400; color: rgba(245,241,232,.55); letter-spacing: 0; margin-left: 10px; white-space: nowrap; }
 .box-title { font-size: 20px; font-weight: 700; letter-spacing: 3px; color: #c0d0c0; margin-bottom: 8px; }
   .box-title b { color: #d9b36a; }
-  #chart { width: 100%; height: 200px; display: block; opacity: 0; transition: opacity 1s ease; }
+  #chart { width: 100%; height: 150px; display: block; opacity: 0; transition: opacity 1s ease; }
   .levels { margin-top: 8px; font-size: 21px; color: #d5e0d5; }
   .levels b { font-weight: 700; }
 
-  .analysis { margin-top: 10px; display: flex; gap: 28px; }
+  .analysis { margin-top: 6px; display: flex; gap: 28px; }
   .panel { background: rgba(245,241,232,.08); border: 1px solid rgba(245,241,232,.13); border-radius: 16px; padding: 12px 20px; }
   .panel.ta { flex: 1.35; }
   .panel.fg { flex: 1; }
@@ -170,9 +170,8 @@
   .fg-hist { font-size: 19px; color: #c0d0c0; margin-top: 6px; }
 
 
-  .ticker { margin-top: 8px; margin-bottom: 2px; flex-shrink: 0; display: flex; flex-direction: column; align-items: stretch; gap: 6px; background: rgba(10, 16, 12, .78); border: 2px solid rgba(217, 179, 106, .55); border-radius: 12px; padding: 10px 20px 18px 12px; overflow: hidden; }
-  .ticker-head { display: flex; justify-content: flex-start; }
-  .ticker-bar { display: flex; align-items: center; gap: 16px; }
+  .ticker { margin-top: 0; margin-bottom: 2px; flex-shrink: 0; display: flex; align-items: center; gap: 16px; background: rgba(10, 16, 12, .78); border: 2px solid rgba(217, 179, 106, .55); border-radius: 12px; padding: 14px 20px 14px 12px; overflow: hidden; }
+  .news-countdown-outer { align-self: flex-start; margin-top: 8px; margin-bottom: 4px; }
   .ticker-label { flex-shrink: 0; font-size: 22px; font-weight: 800; letter-spacing: 2px; color: #0e1713; background: #d9b36a; border-radius: 7px; padding: 8px 14px; }
   .news-countdown { flex-shrink: 0; display: inline-flex; align-items: center; gap: 8px;
     font-size: 17px; font-weight: 700; letter-spacing: 1px; color: #f2e3b6; white-space: nowrap;
@@ -302,18 +301,16 @@
     </div>
   </div>
 
-  <div class="ticker">
-    <div class="ticker-head">
+  <div class="news-countdown-outer">
       <span class="news-countdown" id="newsCountdown"><svg width="26" height="26" viewBox="0 0 26 26"><circle class="cd-ring-bg" cx="13" cy="13" r="10" fill="none" stroke-width="2.5"/><circle class="cd-ring-fg" id="cdRing" cx="13" cy="13" r="10" fill="none" stroke-width="2.5" stroke-dasharray="62.83" stroke-dashoffset="0" transform="rotate(-90 13 13)"/></svg><span id="cdText">next update in 30:00</span><span class="upd" id="updNews"></span></span>
     </div>
-    <div class="ticker-bar">
+  <div class="ticker">
     <span class="ticker-label">CRYPTO NEWS</span>
     
     <div class="ticker-viewport">
       <div class="ticker-track" id="tickerTrack">Bitcoin hit $73,477 overnight — lowest since Aug 21 &nbsp;•&nbsp; US spot Bitcoin ETFs saw ~$1.28B outflows over the week &nbsp;•&nbsp; Fear &amp; Greed still 29 (Fear); Democrats took both chambers in the midterms &nbsp;•&nbsp; Bitcoin hit $73,477 overnight — lowest since Aug 21 &nbsp;•&nbsp; US spot Bitcoin ETFs saw ~$1.28B outflows over the week &nbsp;•&nbsp; Fear &amp; Greed still 29 (Fear); Democrats took both chambers in the midterms &nbsp;•&nbsp;</div>
     </div>
   </div>
-    </div>
 
   <footer>
     <div>Educational content only — not financial advice. youtube.com/@northledgercanada</div>
@@ -354,7 +351,7 @@ function removeNetlifyBadge() {
 removeNetlifyBadge();
 setInterval(removeNetlifyBadge, 2000);
 // Auto-update: check version.json every 5 min; reload when a new deploy lands so OBS never needs a manual refresh.
-const BUILD_VERSION = "2026-11-12T01:18:00Z";
+const BUILD_VERSION = "2026-11-12T01:30:00Z";
 async function checkForUpdate() {
   try {
     const r = await fetch("version.json?_=" + Date.now(), { cache: "no-store", headers: { "Cache-Control": "no-cache, no-store, must-revalidate", "Pragma": "no-cache" } });
