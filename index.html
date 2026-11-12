@@ -352,7 +352,7 @@ function removeNetlifyBadge() {
 removeNetlifyBadge();
 setInterval(removeNetlifyBadge, 2000);
 // Auto-update: check version.json every 5 min; reload when a new deploy lands so OBS never needs a manual refresh.
-const BUILD_VERSION = "2026-11-12T11:10:00Z";
+const BUILD_VERSION = "2026-11-12T11:15:00Z";
 async function checkForUpdate() {
   try {
     const r = await fetch("version.json?_=" + Date.now(), { cache: "no-store", headers: { "Cache-Control": "no-cache, no-store, must-revalidate", "Pragma": "no-cache" } });
@@ -478,6 +478,23 @@ const NEWS_SOURCES = [
 const NEWS_URLS = NEWS_SOURCES.map(src =>
   "https://api.rss2json.com/v1/api.json?rss_url=" + encodeURIComponent(src.rss));
 let newsLoaded = false;
+// --- Smart dedupe: the same story from different outlets has different headlines,
+// so exact-title matching is not enough. Two titles are the same story if they
+// share >= 2 content words AND at least one shared word is distinctive (a name,
+// company, coin or specific event — not a generic crypto/market term or headline verb).
+// Newest telling of each story is kept; the rest are dropped, so the ticker shows
+// each story once while still covering every distinct story.
+const STOPWORDS = new Set("a an the and or of to in on for by at as is are was were be been being has have had its it he she they we you i me my your his her their our us them him who whom which whose if then than so but not no do does did just only even also more most much many some any all both each other another first second third next last now today yesterday tomorrow week month year day time way thing things people million billion trillion percent per vs via amid after before over under into from with about what why how when here there this that these those".split(" "));
+const GENERIC = new Set("bitcoin btc crypto cryptocurrency ethereum eth solana xrp dogecoin cardano blockchain price market etf token coin trading trader traders exchange wallet mining miner miners network protocol defi nft stablecoin altcoin rally crash surge drop drops fall falls rise rises high low top new report reports says said could will would may can news hit eye face see get go come take make put send leave bring drive lead follow watch look turn set keep move shift open close end start begin continue return add give find need want tell ask call name claim suggest expect predict forecast estimate show signal push pull reveal confirm announce launch plan back buy sell hold raise cut hike slash double triple near approach test warn break beat miss win lose gain recover rebound plunge tumble soar jump slide latest breaking live update updates big biggest major key".split(" "));
+function contentWords(title) {
+  return title.toLowerCase().replace(/['']/g, "").replace(/[^a-z0-9$%.\s]/g, " ").split(/\s+/).map(w => w.replace(/s$/, "")).filter(w => w.length >= 3 && !STOPWORDS.has(w));
+}
+function isSameStory(a, b) {
+  const wa = contentWords(a), wb = new Set(contentWords(b));
+  const shared = wa.filter(w => wb.has(w));
+  if (shared.length < 2) return false;
+  return shared.some(w => !GENERIC.has(w));
+}
 async function fetchNews() {
   try {
     const results = await Promise.allSettled(NEWS_URLS.map(u => fetch(u).then(r => { if (!r.ok) throw new Error("HTTP " + r.status); return r.json(); })));
@@ -499,11 +516,19 @@ async function fetchNews() {
       });
     });
     if (!items.length) throw new Error("no news items");
-    // Dedupe by title, newest first, top 25.
-    const seen = new Set();
-    items = items.filter(it => { const k = it.title.trim().toLowerCase(); if (seen.has(k)) return false; seen.add(k); return true; });
+    // Newest first, so dedupe keeps the freshest telling of each story.
     items.sort((a, b) => (b.ts || 0) - (a.ts || 0));
-    const top = items.slice(0, 25);
+    // Dedupe: exact title first, then same-story (different headline, same event).
+    const seen = new Set();
+    const kept = [];
+    for (const it of items) {
+      const k = it.title.trim().toLowerCase();
+      if (seen.has(k)) continue;
+      if (kept.some(prev => isSameStory(prev.title, it.title))) continue;
+      seen.add(k);
+      kept.push(it);
+    }
+    const top = kept.slice(0, 25);
     const one = top.map(it => escapeHtml(it.title)).join(" &nbsp;•&nbsp; ") + " &nbsp;•&nbsp; ";
     document.getElementById("tickerTrack").innerHTML = one + one;
     newsLoaded = true;
