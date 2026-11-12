@@ -187,7 +187,7 @@
   @keyframes countdown-breathe { 0%,100% { opacity: .85; transform: scale(1); }
     50% { opacity: 1; transform: scale(1.02); box-shadow: 0 0 14px rgba(217,179,106,.28); } }
   .ticker-viewport { flex: 1; overflow: hidden; }
-  .ticker-track { display: inline-block; white-space: nowrap; font-size: 31px; line-height: 1.35; font-weight: 600; color: #f5f1e8; animation: ticker-scroll 360s linear infinite; }
+  .ticker-track { display: inline-block; white-space: nowrap; font-size: 31px; line-height: 1.35; font-weight: 600; color: #f5f1e8; animation: ticker-scroll 720s linear infinite; }
   @keyframes ticker-scroll { from { transform: translateX(0); } to { transform: translateX(-50%); } }
 
   footer { position: absolute; left: 64px; right: 64px; bottom: 16px; display: flex; justify-content: space-between; align-items: center; font-size: 19px; color: #a8b8a8; padding-top: 10px; }
@@ -352,7 +352,7 @@ function removeNetlifyBadge() {
 removeNetlifyBadge();
 setInterval(removeNetlifyBadge, 2000);
 // Auto-update: check version.json every 5 min; reload when a new deploy lands so OBS never needs a manual refresh.
-const BUILD_VERSION = "2026-11-12T11:37:00Z";
+const BUILD_VERSION = "2026-11-12T12:09:00Z";
 async function checkForUpdate() {
   try {
     const r = await fetch("version.json?_=" + Date.now(), { cache: "no-store", headers: { "Cache-Control": "no-cache, no-store, must-revalidate", "Pragma": "no-cache" } });
