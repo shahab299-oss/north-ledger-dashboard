@@ -111,8 +111,7 @@
   .maple-cam img { width: 100%; height: 100%; object-fit: cover; display: block; }
   @keyframes maple-breathe { 0%,100% { transform: scale(1); } 50% { transform: scale(1.035); } }
   /* Calm like + subscribe — gentle periodic prompt in the empty upper-right (price row). */
-  .calm-cta { margin-left: auto; align-self: flex-end; padding-bottom: 10px; max-width: 700px; text-align: right; opacity: 0; animation: calm-cycle 300s ease-in-out infinite; }
-  @keyframes calm-cycle { 0% { opacity: 0; } 0.7% { opacity: 1; } 4.7% { opacity: 1; } 5.4% { opacity: 0; } 100% { opacity: 0; } }
+  .calm-cta { margin-left: auto; align-self: flex-end; padding-bottom: 10px; max-width: 700px; text-align: right; opacity: 1; }
   .calm-cta-inner { animation: calm-breathe 6s ease-in-out infinite; }
   @keyframes calm-breathe { 0%,100% { opacity: .82; transform: scale(1); } 50% { opacity: 1; transform: scale(1.015); } }
   .calm-line { font-family: Georgia, 'Palatino Linotype', 'Book Antiqua', serif; font-style: italic; font-size: 22px; line-height: 1.3; color: #bccbb8; white-space: nowrap; }
@@ -346,7 +345,7 @@ function removeNetlifyBadge() {
 removeNetlifyBadge();
 setInterval(removeNetlifyBadge, 2000);
 // Auto-update: check version.json every 5 min; reload when a new deploy lands so OBS never needs a manual refresh.
-const BUILD_VERSION = "2026-11-12T00:37:00Z";
+const BUILD_VERSION = "2026-11-12T00:57:00Z";
 async function checkForUpdate() {
   try {
     const r = await fetch("version.json?_=" + Date.now(), { cache: "no-store", headers: { "Cache-Control": "no-cache, no-store, must-revalidate", "Pragma": "no-cache" } });
