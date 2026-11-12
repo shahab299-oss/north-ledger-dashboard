@@ -92,7 +92,7 @@
   .logo-lockup { height: 54px; width: auto; }
   .brand span { font-size: 26px; font-weight: 800; letter-spacing: 5px; color: #d9b36a; }
   .date { font-size: 24px; color: #c0d0c0; font-weight: 600; }
-  .cpi-banner { flex: 1; text-align: center; margin: 0; padding: 10px 18px; max-width: none; border: 2px solid #e8b64c; border-radius: 12px; background: rgba(20, 14, 4, 0.72); animation: cpi-flash 1.6s ease-in-out infinite; }
+  .cpi-banner { flex: 1; text-align: center; margin: 0; padding: 6px 18px; max-width: none; border: 2px solid #e8b64c; border-radius: 12px; background: rgba(20, 14, 4, 0.72); animation: cpi-flash 1.6s ease-in-out infinite; }
 .top-row { display: flex; align-items: center; gap: 28px; margin-top: 6px; }
 .cpi-main { font-size: 30px; font-weight: 800; letter-spacing: 1px; color: #f5c542; }
 .cpi-forecast { font-size: 19px; color: #e8e0c8; margin-top: 4px; }
@@ -101,13 +101,13 @@
   .dot { width: 14px; height: 14px; border-radius: 50%; background: #d9b36a; animation: pulse 2.4s ease-in-out infinite; }
   @keyframes pulse { 0%,100% { opacity: 1; } 50% { opacity: .35; } }
 
-  .price-row { margin-top: 8px; display: flex; align-items: flex-end; gap: 34px; }
+  .price-row { margin-top: 4px; display: flex; align-items: flex-end; gap: 34px; }
   .price-block { display: flex; flex-direction: column; }
   .price-label { font-size: 19px; font-weight: 700; letter-spacing: 3px; color: #c0d0c0; margin-bottom: 2px; }
-  .price-usd { font-size: 88px; font-weight: 800; line-height: .95; letter-spacing: -2px; }
-  .price-usd small { font-size: 38px; font-weight: 700; color: #c0d0c0; }
-  .price-cad { font-size: 50px; font-weight: 700; line-height: 1; letter-spacing: -1px; color: #d8e0d4; }
-  .price-cad small { font-size: 26px; font-weight: 700; color: #c0d0c0; }
+  .price-usd { font-size: 70px; font-weight: 800; line-height: .95; letter-spacing: -2px; }
+  .price-usd small { font-size: 30px; font-weight: 700; color: #c0d0c0; }
+  .price-cad { font-size: 40px; font-weight: 700; line-height: 1; letter-spacing: -1px; color: #d8e0d4; }
+  .price-cad small { font-size: 22px; font-weight: 700; color: #c0d0c0; }
   .price-block.cad { padding-bottom: 10px; }
   .change { font-size: 34px; font-weight: 800; padding-bottom: 12px; }
   .maple-cam { align-self: center; width: 132px; height: 132px; border-radius: 50%; overflow: hidden; border: 3px solid rgba(217,179,106,.65); box-shadow: 0 0 28px rgba(217,179,106,.28); flex-shrink: 0; animation: maple-breathe 6s ease-in-out infinite; }
@@ -354,7 +354,7 @@ function removeNetlifyBadge() {
 removeNetlifyBadge();
 setInterval(removeNetlifyBadge, 2000);
 // Auto-update: check version.json every 5 min; reload when a new deploy lands so OBS never needs a manual refresh.
-const BUILD_VERSION = "2026-11-12T01:32:00Z";
+const BUILD_VERSION = "2026-11-12T01:34:00Z";
 async function checkForUpdate() {
   try {
     const r = await fetch("version.json?_=" + Date.now(), { cache: "no-store", headers: { "Cache-Control": "no-cache, no-store, must-revalidate", "Pragma": "no-cache" } });
