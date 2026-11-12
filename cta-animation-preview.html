@@ -1,0 +1,145 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>Calm CTA animation — preview</title>
+<style>
+  * { box-sizing: border-box; }
+  body { margin: 0; background: #0a1417; font-family: -apple-system, "Segoe UI", Roboto, sans-serif; }
+  .stage {
+    max-width: 980px; margin: 0 auto; padding: 34px 28px 22px;
+    background: linear-gradient(180deg, #0e2025 0%, #10262b 55%, #0b1a1e 100%);
+    border-radius: 14px; color: #e8efe9;
+  }
+  .stage-label { font-size: 12px; letter-spacing: .14em; color: #7fa08a; text-transform: uppercase; margin-bottom: 18px; }
+  /* ---- mock of the dashboard price row ---- */
+  .price-row { display: flex; align-items: flex-end; justify-content: space-between; gap: 20px; }
+  .price-mock { font-size: 30px; color: #f2ead8; white-space: nowrap; padding-bottom: 8px; }
+  .price-mock b { font-weight: 800; }
+  .price-mock .cad { font-size: 20px; color: #b9c4b4; }
+  .price-mock .down { font-size: 19px; color: #e26d5a; }
+  /* ---- the calm card, copied from the live dashboard ---- */
+  .calm-cta { margin-left: auto; align-self: flex-end; padding-bottom: 10px; max-width: 700px; text-align: right; }
+  .calm-cta-inner { animation: calm-breathe 6s ease-in-out infinite; }
+  @keyframes calm-breathe { 0%,100% { opacity: .82; transform: scale(1); } 50% { opacity: 1; transform: scale(1.015); } }
+  .calm-cta.animating .calm-cta-inner { animation: none; opacity: 1; }
+  .calm-line { font-family: Georgia, 'Palatino Linotype', 'Book Antiqua', serif; font-style: italic; font-size: 22px; line-height: 1.3; color: #bccbb8; white-space: nowrap; transition: color .5s ease; }
+  .calm-cta.step-like .calm-line, .calm-cta.step-sub-red .calm-line, .calm-cta.step-subbed .calm-line, .calm-cta.step-bell .calm-line { color: #e6efe2; }
+  .calm-actions { margin-top: 8px; display: flex; justify-content: flex-end; align-items: center; gap: 12px; }
+  .calm-like, .calm-sub {
+    display: inline-flex; align-items: center; gap: 7px;
+    font-size: 19px; font-weight: 700; border-radius: 999px; padding: 5px 14px;
+    transition: background-color .45s ease, color .45s ease, border-color .45s ease, transform .45s cubic-bezier(.34,1.56,.64,1), box-shadow .45s ease;
+  }
+  .calm-like { color: #8fb996; border: 1.5px solid rgba(143,185,150,.55); background: rgba(143,185,150,.08); }
+  .calm-like svg { width: 20px; height: 20px; display: block; }
+  .calm-like svg path { transition: fill .4s ease, stroke .4s ease; }
+  .calm-sub { position: relative; color: #d9b36a; border: 1.5px solid rgba(217,179,106,.6); background: rgba(217,179,106,.10); }
+  .calm-sub svg { width: 20px; height: 20px; display: block; transform-origin: 50% 0; }
+  .calm-sub svg path { transition: fill .4s ease, stroke .4s ease; }
+  /* ---- animation steps ---- */
+  .calm-cta.step-like .calm-like {
+    color: #fff; border-color: #3b82f6; background: #3b82f6;
+    transform: scale(1.1); box-shadow: 0 0 0 6px rgba(59,130,246,.18);
+  }
+  .calm-cta.step-like .calm-like svg path { fill: #fff; stroke: #fff; }
+  .calm-cta.step-sub-red .calm-sub {
+    color: #fff; border-color: #ff0000; background: #ff0000;
+    transform: scale(1.08); box-shadow: 0 0 0 6px rgba(255,0,0,.16);
+  }
+  .calm-cta.step-sub-red .calm-sub svg path { fill: none; stroke: #fff; }
+  .calm-cta.step-subbed .calm-sub {
+    color: #fff; border-color: #5f5f5f; background: #5f5f5f;
+    transform: scale(1); box-shadow: none;
+  }
+  .calm-cta.step-subbed .calm-sub svg path { fill: #d9b36a; stroke: #d9b36a; }
+  .calm-cta.step-bell .calm-sub svg { animation: ring .9s ease-in-out; }
+  @keyframes ring { 0% { transform: rotate(0); } 20% { transform: rotate(16deg); } 40% { transform: rotate(-13deg); } 60% { transform: rotate(9deg); } 80% { transform: rotate(-6deg); } 100% { transform: rotate(0); } }
+  .all-tag {
+    position: absolute; top: -12px; right: -10px;
+    background: #000; color: #d9b36a; border: 1px solid rgba(217,179,106,.75);
+    font-size: 12px; font-weight: 800; letter-spacing: .04em;
+    padding: 2px 8px; border-radius: 999px;
+    opacity: 0; transform: scale(.5); pointer-events: none;
+    transition: opacity .3s ease, transform .35s cubic-bezier(.34,1.56,.64,1);
+  }
+  .calm-cta.step-bell .all-tag { opacity: 1; transform: scale(1); }
+  /* ---- caption + controls ---- */
+  .status { margin-top: 26px; font-size: 15px; color: #9fb3a4; min-height: 22px; }
+  .status b { color: #e8efe9; }
+  .controls { margin-top: 10px; display: flex; align-items: center; gap: 14px; flex-wrap: wrap; }
+  .replay {
+    appearance: none; border: 1px solid rgba(217,179,106,.6); background: rgba(217,179,106,.12);
+    color: #d9b36a; font-size: 15px; font-weight: 700; border-radius: 999px; padding: 8px 18px; cursor: pointer;
+  }
+  .note { font-size: 13px; color: #7d9384; line-height: 1.5; }
+</style>
+</head>
+<body>
+<div class="stage">
+  <div class="stage-label">Live dashboard &middot; price row &middot; preview</div>
+  <div class="price-row">
+    <div class="price-mock">&#8383; <b>$71,298</b> <span class="cad">USD &middot; $101,692 CAD</span> <span class="down">&#9660; 3.09%</span></div>
+    <div class="calm-cta" id="calmCta">
+      <div class="calm-cta-inner">
+        <div class="calm-line">If this brings you calm, subscribe for more quiet nights.</div>
+        <div class="calm-actions">
+          <span class="calm-like"><svg viewBox="0 0 24 24" fill="none" stroke="#8fb996" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M7 10v12"/><path d="M15 5.88 14 10h5.83a2 2 0 0 1 1.92 2.56l-2.33 8A2 2 0 0 1 17.5 22H4a2 2 0 0 1-2-2v-8a2 2 0 0 1 2-2h2.76a2 2 0 0 0 1.79-1.11L12 2h0a3.13 3.13 0 0 1 3 3.88Z"/></svg> <span class="like-label">Like</span></span>
+          <span class="calm-sub"><svg viewBox="0 0 24 24" fill="none" stroke="#d9b36a" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M6 8a6 6 0 0 1 12 0c0 7 3 9 3 9H3s3-2 3-9"/><path d="M10.3 21a1.94 1.94 0 0 0 3.4 0"/></svg> <span class="sub-label">Subscribe</span><span class="all-tag">ALL</span></span>
+        </div>
+      </div>
+    </div>
+  </div>
+  <div class="status" id="status">Resting &mdash; the calm card, as it is on the stream now.</div>
+  <div class="controls">
+    <button class="replay" id="replayBtn">Replay the animation</button>
+    <div class="note">Preview loops every 14 seconds so you can watch it. On the live dashboard it would play once every 10 minutes, then rest. No sound.</div>
+  </div>
+</div>
+<script>
+  // Preview loop: 14s. Live version: change CYCLE_MS to 600000 (10 min).
+  var CYCLE_MS = 14000;
+  var cta = document.getElementById('calmCta');
+  var statusEl = document.getElementById('status');
+  var subLabel = document.querySelector('.sub-label');
+  var timers = [];
+  function later(ms, fn) { timers.push(setTimeout(fn, ms)); }
+  function setStatus(html) { statusEl.innerHTML = html; }
+  function runCycle() {
+    timers.forEach(clearTimeout); timers = [];
+    cta.classList.remove('animating','step-like','step-sub-red','step-subbed','step-bell');
+    subLabel.textContent = 'Subscribe';
+    setStatus('Resting &mdash; the calm card, as it is on the stream now.');
+    later(600, function() {
+      cta.classList.add('animating','step-like');
+      setStatus('<b>1 &middot; Like</b> &mdash; the thumb fills blue and pops, like your subscribe video.');
+    });
+    later(2200, function() {
+      cta.classList.add('step-sub-red');
+      setStatus('<b>2 &middot; Subscribe</b> &mdash; the pill turns red, the way YouTube&rsquo;s button does.');
+    });
+    later(3800, function() {
+      cta.classList.remove('step-sub-red');
+      cta.classList.add('step-subbed');
+      subLabel.textContent = '\u2713 Subscribed';
+      setStatus('<b>3 &middot; Subscribed</b> &mdash; the pill turns grey, &ldquo;Subscribed&rdquo; with a check.');
+    });
+    later(5200, function() {
+      cta.classList.add('step-bell');
+      setStatus('<b>4 &middot; Bell</b> &mdash; the bell rings, turns gold, and the ALL tag pops in.');
+    });
+    later(7800, function() {
+      cta.classList.remove('animating','step-like','step-subbed','step-bell');
+      subLabel.textContent = 'Subscribe';
+      setStatus('Settling back to the calm card&hellip;');
+    });
+    later(9000, function() {
+      setStatus('Resting &mdash; the calm card, as it is on the stream now.');
+    });
+  }
+  document.getElementById('replayBtn').addEventListener('click', runCycle);
+  runCycle();
+  setInterval(runCycle, CYCLE_MS);
+</script>
+</body>
+</html>
