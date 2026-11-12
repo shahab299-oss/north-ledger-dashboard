@@ -352,7 +352,7 @@ function removeNetlifyBadge() {
 removeNetlifyBadge();
 setInterval(removeNetlifyBadge, 2000);
 // Auto-update: check version.json every 5 min; reload when a new deploy lands so OBS never needs a manual refresh.
-const BUILD_VERSION = "2026-11-12T01:38:00Z";
+const BUILD_VERSION = "2026-11-12T11:10:00Z";
 async function checkForUpdate() {
   try {
     const r = await fetch("version.json?_=" + Date.now(), { cache: "no-store", headers: { "Cache-Control": "no-cache, no-store, must-revalidate", "Pragma": "no-cache" } });
@@ -452,13 +452,28 @@ setInterval(updateClock, 1000); // live clock in the footer
 function escapeHtml(s) {
   return String(s).replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;");
 }
-// News sources: CoinDesk (all crypto) + Reuters Business + Yahoo Finance (macro, filtered to crypto-relevant).
-// Anything that moves crypto — CPI, Fed, jobs, rates, inflation — belongs in the ticker.
+// News sources: 15 crypto-native outlets (everything they publish is crypto) +
+// 2 macro/finance outlets (Yahoo Finance, MarketWatch) filtered to crypto-relevant
+// stories only. Anything that moves crypto — Nvidia/AI, MSCI/Strategy, CPI, Fed,
+// jobs, rates, inflation — belongs in the ticker.
 const NEWS_SOURCES = [
   { rss: "https://www.coindesk.com/arc/outboundfeeds/rss/", filter: null },
   { rss: "https://cointelegraph.com/rss", filter: null },
   { rss: "https://decrypt.co/feed", filter: null },
-  { rss: "https://cryptonews.com/news/feed/", filter: null }
+  { rss: "https://cryptonews.com/news/feed/", filter: null },
+  { rss: "https://www.theblock.co/rss.xml", filter: null },
+  { rss: "https://bitcoinmagazine.com/feed/", filter: null },
+  { rss: "https://beincrypto.com/feed/", filter: null },
+  { rss: "https://cryptoslate.com/feed/", filter: null },
+  { rss: "https://u.today/rss", filter: null },
+  { rss: "https://www.newsbtc.com/feed/", filter: null },
+  { rss: "https://coinjournal.net/news/feed/", filter: null },
+  { rss: "https://ambcrypto.com/feed/", filter: null },
+  { rss: "https://coingape.com/feed/", filter: null },
+  { rss: "https://news.bitcoin.com/feed/", filter: null },
+  { rss: "https://cryptopotato.com/feed/", filter: null },
+  { rss: "https://finance.yahoo.com/news/rssindex", filter: /bitcoin|btc|crypto|ethereum|solana|blockchain|coinbase|binance|nvidia|strategy|microstrategy|metaplanet|msci|federal reserve|fed\b|cpi|ppi|inflation|interest rate|rate cut|rate hike|stablecoin|tether|xrp|dogecoin|cardano|ripple|mining|treasury|etf|nasdaq|gold/i },
+  { rss: "https://www.marketwatch.com/rss/topstories", filter: /bitcoin|btc|crypto|ethereum|solana|blockchain|coinbase|binance|nvidia|strategy|microstrategy|metaplanet|msci|federal reserve|fed\b|cpi|ppi|inflation|interest rate|rate cut|rate hike|stablecoin|tether|xrp|dogecoin|cardano|ripple|mining|treasury|etf|nasdaq|gold/i }
 ]
 const NEWS_URLS = NEWS_SOURCES.map(src =>
   "https://api.rss2json.com/v1/api.json?rss_url=" + encodeURIComponent(src.rss));
@@ -477,17 +492,18 @@ async function fetchNews() {
         if (filter && !filter.test(it.title + " " + (it.description || ""))) return;
         const ts = it.pubDate ? Date.parse(it.pubDate) : 0;
         if (!ts) return;
-        const d0 = new Date(ts), n0 = new Date();
-        if (d0.getFullYear() !== n0.getFullYear() || d0.getMonth() !== n0.getMonth() || d0.getDate() !== n0.getDate()) return;
+        // Last 24 hours, not "today only" — a story from last evening must still
+        // show this morning (e.g. a Nov 11 evening story at 06:00 on Nov 12).
+        if (Date.now() - ts > 24 * 60 * 60 * 1000) return;
         items.push({ title: it.title, ts });
       });
     });
     if (!items.length) throw new Error("no news items");
-    // Dedupe by title, newest first, top 10.
+    // Dedupe by title, newest first, top 25.
     const seen = new Set();
     items = items.filter(it => { const k = it.title.trim().toLowerCase(); if (seen.has(k)) return false; seen.add(k); return true; });
     items.sort((a, b) => (b.ts || 0) - (a.ts || 0));
-    const top = items.slice(0, 10);
+    const top = items.slice(0, 25);
     const one = top.map(it => escapeHtml(it.title)).join(" &nbsp;•&nbsp; ") + " &nbsp;•&nbsp; ";
     document.getElementById("tickerTrack").innerHTML = one + one;
     newsLoaded = true;
