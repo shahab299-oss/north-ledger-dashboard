@@ -351,7 +351,7 @@ function removeNetlifyBadge() {
 removeNetlifyBadge();
 setInterval(removeNetlifyBadge, 2000);
 // Auto-update: check version.json every 5 min; reload when a new deploy lands so OBS never needs a manual refresh.
-const BUILD_VERSION = "2026-11-13T13:39:00Z";
+const BUILD_VERSION = "2026-11-13T14:12:00Z";
 async function checkForUpdate() {
   try {
     const r = await fetch("version.json?_=" + Date.now(), { cache: "no-store", headers: { "Cache-Control": "no-cache, no-store, must-revalidate", "Pragma": "no-cache" } });
@@ -390,9 +390,12 @@ async function fetchContent() {
         const sub = document.getElementById("cpiSub");
         if (main && d.banner.title) main.textContent = d.banner.title;
         if (sub && d.banner.sub) sub.textContent = d.banner.sub;
+        lastBannerTitle = d.banner.title || "";
       } else {
         banner.style.display = "none";
+        lastBannerTitle = "";
       }
+      renderTicker();
     }
   } catch (e) { /* keep the hardcoded banner/note if the Gist cannot be read */ }
 }
@@ -495,6 +498,21 @@ function isSameStory(a, b) {
   if (shared.length < 2) return false;
   return shared.some(w => !GENERIC.has(w));
 }
+// Ticker state shared with the banner loader: when the Gist banner carries an
+// "IS IN" event result, that verified headline leads the ticker in gold.
+var lastBannerTitle = "";
+var lastTop = null;
+var lastFresh = new Set();
+function renderTicker() {
+  if (!lastTop) return;
+  const pin = /IS IN/i.test(lastBannerTitle)
+    ? "<span class=\"fresh\">✦ " + escapeHtml(lastBannerTitle) + "</span> &nbsp;•&nbsp; "
+    : "";
+  const one = pin + lastTop.map((it, i) => lastFresh.has(i)
+    ? "<span class=\"fresh\">✦ " + escapeHtml(it.title) + "</span>"
+    : escapeHtml(it.title)).join(" &nbsp;•&nbsp; ") + " &nbsp;•&nbsp; ";
+  document.getElementById("tickerTrack").innerHTML = one + one;
+}
 async function fetchNews() {
   try {
     const results = await Promise.allSettled(NEWS_URLS.map(u => fetch(u).then(r => { if (!r.ok) throw new Error("HTTP " + r.status); return r.json(); })));
@@ -539,10 +557,9 @@ async function fetchNews() {
       });
     }
     prevTitles = top.map(it => it.title);
-    const one = top.map((it, i) => fresh.has(i)
-      ? "<span class=\"fresh\">✦ " + escapeHtml(it.title) + "</span>"
-      : escapeHtml(it.title)).join(" &nbsp;•&nbsp; ") + " &nbsp;•&nbsp; ";
-    document.getElementById("tickerTrack").innerHTML = one + one;
+    lastTop = top;
+    lastFresh = fresh;
+    renderTicker();
     newsLoaded = true;
     stamp("updNews");
   } catch (e) { if (!newsLoaded) setTimeout(fetchNews, 30000); /* retry in 30s if news never loaded */ }
