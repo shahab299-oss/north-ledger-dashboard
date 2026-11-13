@@ -351,7 +351,7 @@ function removeNetlifyBadge() {
 removeNetlifyBadge();
 setInterval(removeNetlifyBadge, 2000);
 // Auto-update: check version.json every 5 min; reload when a new deploy lands so OBS never needs a manual refresh.
-const BUILD_VERSION = "2026-11-13T14:12:00Z";
+const BUILD_VERSION = "2026-11-13T14:21:42Z";
 async function checkForUpdate() {
   try {
     const r = await fetch("version.json?_=" + Date.now(), { cache: "no-store", headers: { "Cache-Control": "no-cache, no-store, must-revalidate", "Pragma": "no-cache" } });
@@ -498,17 +498,14 @@ function isSameStory(a, b) {
   if (shared.length < 2) return false;
   return shared.some(w => !GENERIC.has(w));
 }
-// Ticker state shared with the banner loader: when the Gist banner carries an
-// "IS IN" event result, that verified headline leads the ticker in gold.
+// Ticker state: the ticker renders ONLY the news pool (the top 25 from the
+// feeds). Nothing is inserted by hand (Shahab's rule, Nov 13).
 var lastBannerTitle = "";
 var lastTop = null;
 var lastFresh = new Set();
 function renderTicker() {
   if (!lastTop) return;
-  const pin = /IS IN/i.test(lastBannerTitle)
-    ? "<span class=\"fresh\">✦ " + escapeHtml(lastBannerTitle) + "</span> &nbsp;•&nbsp; "
-    : "";
-  const one = pin + lastTop.map((it, i) => lastFresh.has(i)
+  const one = lastTop.map((it, i) => lastFresh.has(i)
     ? "<span class=\"fresh\">✦ " + escapeHtml(it.title) + "</span>"
     : escapeHtml(it.title)).join(" &nbsp;•&nbsp; ") + " &nbsp;•&nbsp; ";
   document.getElementById("tickerTrack").innerHTML = one + one;
