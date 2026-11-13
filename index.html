@@ -256,7 +256,7 @@
     <span class="tagline">Stay here to relax — and see the news update as it happens.</span>
     <span class="stay-right">
       <span class="live-status"><span id="status" class="ok">● LIVE FEED</span> &nbsp;·&nbsp; updated <span id="updated">—</span></span>
-      <span class="fed-pill">📊 PPI REPORT IN <b id="ppiCountdown">—</b></span>
+      <span class="fed-pill">📊 JOBS REPORT IN <b id="ppiCountdown">—</b></span>
     </span>
   </div>
 
@@ -351,7 +351,7 @@ function removeNetlifyBadge() {
 removeNetlifyBadge();
 setInterval(removeNetlifyBadge, 2000);
 // Auto-update: check version.json every 5 min; reload when a new deploy lands so OBS never needs a manual refresh.
-const BUILD_VERSION = "2026-11-13T12:26:41Z";
+const BUILD_VERSION = "2026-11-13T13:39:00Z";
 async function checkForUpdate() {
   try {
     const r = await fetch("version.json?_=" + Date.now(), { cache: "no-store", headers: { "Cache-Control": "no-cache, no-store, must-revalidate", "Pragma": "no-cache" } });
@@ -400,8 +400,8 @@ fetchContent();
 setInterval(fetchContent, 300000); // re-read the Gist every 5 min
 updateCpi();
 setInterval(updateCpi, 1000);
-// PPI countdown — October PPI, Fri Nov 13, 2026, 8:30 AM ET.
-const PPI_TARGET = new Date(2026, 10, 13, 8, 30, 0);
+// Jobs Report countdown — November jobs report, Fri Dec 4, 2026, 8:30 AM ET.
+const PPI_TARGET = new Date(2026, 11, 4, 8, 30, 0);
 function updatePpi() {
   const el = document.getElementById("ppiCountdown");
   if (!el) return;
