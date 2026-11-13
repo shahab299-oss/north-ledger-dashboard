@@ -188,6 +188,7 @@
     50% { opacity: 1; transform: scale(1.02); box-shadow: 0 0 14px rgba(217,179,106,.28); } }
   .ticker-viewport { flex: 1; overflow: hidden; }
   .ticker-track { display: inline-block; white-space: nowrap; font-size: 31px; line-height: 1.35; font-weight: 600; color: #f5f1e8; animation: ticker-scroll 720s linear infinite; }
+  .ticker-track .fresh { color: #e9cd8f; font-weight: 600; }
   @keyframes ticker-scroll { from { transform: translateX(0); } to { transform: translateX(-50%); } }
 
   footer { position: absolute; left: 64px; right: 64px; bottom: 16px; display: flex; justify-content: space-between; align-items: center; font-size: 19px; color: #a8b8a8; padding-top: 10px; }
@@ -350,7 +351,7 @@ function removeNetlifyBadge() {
 removeNetlifyBadge();
 setInterval(removeNetlifyBadge, 2000);
 // Auto-update: check version.json every 5 min; reload when a new deploy lands so OBS never needs a manual refresh.
-const BUILD_VERSION = "2026-11-13T12:13:10Z";
+const BUILD_VERSION = "2026-11-13T12:26:41Z";
 async function checkForUpdate() {
   try {
     const r = await fetch("version.json?_=" + Date.now(), { cache: "no-store", headers: { "Cache-Control": "no-cache, no-store, must-revalidate", "Pragma": "no-cache" } });
@@ -476,6 +477,7 @@ const NEWS_SOURCES = [
 const NEWS_URLS = NEWS_SOURCES.map(src =>
   "https://api.rss2json.com/v1/api.json?rss_url=" + encodeURIComponent(src.rss));
 let newsLoaded = false;
+let prevTitles = null; // titles from the previous fetch; null = nothing fetched yet
 // --- Smart dedupe: the same story from different outlets has different headlines,
 // so exact-title matching is not enough. Two titles are the same story if they
 // share >= 2 content words AND at least one shared word is distinctive (a name,
@@ -527,7 +529,19 @@ async function fetchNews() {
       kept.push(it);
     }
     const top = kept.slice(0, 25);
-    const one = top.map(it => escapeHtml(it.title)).join(" &nbsp;•&nbsp; ") + " &nbsp;•&nbsp; ";
+    // Fresh = stories that were not in the previous pool, matched by story
+    // (not exact wording) so a reworded headline does not fake-highlight.
+    // First load only seeds the pool: nothing is highlighted.
+    const fresh = new Set();
+    if (prevTitles !== null) {
+      top.forEach((it, i) => {
+        if (!prevTitles.some(pt => pt === it.title || isSameStory(pt, it.title))) fresh.add(i);
+      });
+    }
+    prevTitles = top.map(it => it.title);
+    const one = top.map((it, i) => fresh.has(i)
+      ? "<span class=\"fresh\">✦ " + escapeHtml(it.title) + "</span>"
+      : escapeHtml(it.title)).join(" &nbsp;•&nbsp; ") + " &nbsp;•&nbsp; ";
     document.getElementById("tickerTrack").innerHTML = one + one;
     newsLoaded = true;
     stamp("updNews");
