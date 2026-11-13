@@ -302,9 +302,7 @@
     </div>
   </div>
 
-  <div class="news-countdown-outer">
-      <span class="news-countdown" id="newsCountdown"><svg width="26" height="26" viewBox="0 0 26 26"><circle class="cd-ring-bg" cx="13" cy="13" r="10" fill="none" stroke-width="2.5"/><circle class="cd-ring-fg" id="cdRing" cx="13" cy="13" r="10" fill="none" stroke-width="2.5" stroke-dasharray="62.83" stroke-dashoffset="0" transform="rotate(-90 13 13)"/></svg><span id="cdText">next update in 30:00</span><span class="upd" id="updNews"></span></span>
-    </div>
+  <div class="news-countdown-outer"><span class="upd" id="updNews"></span></div>
   <div class="ticker">
     <span class="ticker-label">CRYPTO NEWS</span>
     
@@ -352,7 +350,7 @@ function removeNetlifyBadge() {
 removeNetlifyBadge();
 setInterval(removeNetlifyBadge, 2000);
 // Auto-update: check version.json every 5 min; reload when a new deploy lands so OBS never needs a manual refresh.
-const BUILD_VERSION = "2026-11-12T14:50:00Z";
+const BUILD_VERSION = "2026-11-13T12:13:10Z";
 async function checkForUpdate() {
   try {
     const r = await fetch("version.json?_=" + Date.now(), { cache: "no-store", headers: { "Cache-Control": "no-cache, no-store, must-revalidate", "Pragma": "no-cache" } });
@@ -533,27 +531,10 @@ async function fetchNews() {
     document.getElementById("tickerTrack").innerHTML = one + one;
     newsLoaded = true;
     stamp("updNews");
-    nextNewsAt = Date.now() + 30 * 60 * 1000;
   } catch (e) { if (!newsLoaded) setTimeout(fetchNews, 30000); /* retry in 30s if news never loaded */ }
 }
-let nextNewsAt = Date.now() + 30 * 60 * 1000;
-function tickNewsCountdown() {
-  const el = document.getElementById("cdText");
-  const ring = document.getElementById("cdRing");
-  if (!el) return;
-  let ms = nextNewsAt - Date.now();
-  if (ms < 0) ms = 0;
-  const m = Math.floor(ms / 60000), sec = Math.floor((ms % 60000) / 1000);
-  el.textContent = "next update in " + String(m).padStart(2, "0") + ":" + String(sec).padStart(2, "0");
-  if (ring) {
-    const frac = ms / (30 * 60 * 1000);
-    ring.setAttribute("stroke-dashoffset", String((62.83 * (1 - frac)).toFixed(2)));
-  }
-}
-setInterval(tickNewsCountdown, 1000);
-tickNewsCountdown();
 fetchNews();
-setInterval(() => { fetchNews(); nextNewsAt = Date.now() + 30 * 60 * 1000; }, 15 * 60 * 1000);
+setInterval(fetchNews, 15 * 60 * 1000);
 // Day/night theming — morning / afternoon / evening / night.
 function applyTheme() {
   const h = new Date().getHours();
