@@ -126,8 +126,6 @@
   .stay-row { margin-top: 6px; display: flex; align-items: center; gap: 18px; }
 .stay-right { margin-left: auto; display: flex; align-items: center; gap: 18px; }
 .live-status { font-size: 17px; color: #a8b8a8; white-space: nowrap; }
-  .fed-pill { font-size: 19px; font-weight: 700; letter-spacing: 1px; color: #f2e3b6; background: rgba(217,179,106,.14); border: 1px solid rgba(217,179,106,.35); border-radius: 999px; padding: 4px 14px; white-space: nowrap; font-variant-numeric: tabular-nums; }
-  .fed-pill b { color: #d9b36a; }
   .levels2 { margin-top: 6px; font-size: 20px; color: #d5e0d5; }
   .levels2 b { font-weight: 700; }
   .tagline { font-size: 20px; font-weight: 700; color: #d9b36a; letter-spacing: .2px; }
@@ -256,7 +254,6 @@
     <span class="tagline">Stay here to relax — and see the news update as it happens.</span>
     <span class="stay-right">
       <span class="live-status"><span id="status" class="ok">● LIVE FEED</span> &nbsp;·&nbsp; updated <span id="updated">—</span></span>
-      <span class="fed-pill">📊 FOMC MINUTES IN <b id="ppiCountdown">—</b></span>
     </span>
   </div>
 
@@ -351,7 +348,7 @@ function removeNetlifyBadge() {
 removeNetlifyBadge();
 setInterval(removeNetlifyBadge, 2000);
 // Auto-update: check version.json every 5 min; reload when a new deploy lands so OBS never needs a manual refresh.
-const BUILD_VERSION = "2026-11-16T03:22:22Z";
+const BUILD_VERSION = "2026-11-16T03:35:28Z";
 async function checkForUpdate() {
   try {
     const r = await fetch("version.json?_=" + Date.now(), { cache: "no-store", headers: { "Cache-Control": "no-cache, no-store, must-revalidate", "Pragma": "no-cache" } });
@@ -403,21 +400,6 @@ fetchContent();
 setInterval(fetchContent, 300000); // re-read the Gist every 5 min
 updateCpi();
 setInterval(updateCpi, 1000);
-// FOMC minutes countdown — Wed Nov 18, 2026, 2:00 PM ET.
-const PPI_TARGET = new Date(2026, 10, 18, 14, 0, 0);
-function updatePpi() {
-  const el = document.getElementById("ppiCountdown");
-  if (!el) return;
-  const ms = PPI_TARGET - new Date();
-  if (ms <= 0) { el.textContent = "TODAY"; return; }
-  const d = Math.floor(ms / 86400000);
-  const h = Math.floor((ms % 86400000) / 3600000);
-  const m = Math.floor((ms % 3600000) / 60000);
-  const s = Math.floor((ms % 60000) / 1000);
-  el.textContent = d + "d " + String(h).padStart(2, "0") + ":" + String(m).padStart(2, "0") + ":" + String(s).padStart(2, "0");
-}
-updatePpi();
-setInterval(updatePpi, 1000);
 // Price-distance + today's-range strip (under the chart).
 function updateLevels2() {
   const el = document.getElementById("levels2");
